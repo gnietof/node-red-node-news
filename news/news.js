@@ -66,7 +66,7 @@ module.exports = function(RED) {
 			}	
 		};
 
-		this.on('input', function (msg) {
+		this.on('input', function () {
 			var alchemy_data_news = watson.alchemy_data_news({
 				api_key: node.key
 			});
@@ -98,6 +98,6 @@ module.exports = function(RED) {
 
 	RED.nodes.registerType('news',NewsNode);
 
-}
+};
 
 
