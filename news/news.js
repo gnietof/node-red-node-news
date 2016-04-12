@@ -1,10 +1,8 @@
 module.exports = function(RED) {
 
 	var http = require('http');
-	var https = require('https');
 
 //	var cfEnv = require("cfenv");
-	var util = require("util");
 //	var appEnv   = cfEnv.getAppEnv();
 
 	var watson = require('watson-developer-cloud');
@@ -25,65 +23,6 @@ module.exports = function(RED) {
 		this.query = config.query;
 		this.queries = config.queries;
 		this.results = config.results;
-
-		this.playEffect = function() {
-			node.log('effects');
-
-			var queries=[];
-			for (var i=0;i<node.queries.length;i++) {
-				var s = {
-					"color": {
-					"components": {
-				 		"r": node.queries[i].r,
-						"g": node.queries[i].g,
-						"b": node.queries[i].b,
-						"w": node.queries[i].w
-					},
-					"fade": node.queries[i].f,
-					"intensity": node.queries[i].i
-				},
-				"target": {
-					"id": Number(node.queries[i].id),
-					"type": node.queries[i].type
-				},
-					"start_time": node.queries[i].start
-				}
-				queries.push(s);
-			};		
-
-			var data = {
-				"name": node.name,
-				"duration": Number(node.duration),
-				"priority": Number(node.priority),
-				"cyclic": node.cyclic,
-				"queries": queries
-			};
-
-			node.log(JSON.stringify(data));
-
-			var options = {
-				host: node.wizardConfig.host,
-				port: node.wizardConfig.port,
-				path: '/master/effect',
-				method: 'POST',
-				headers: {'Content-Type' : 'application/json'}
-
-			};
-
-			node.log(JSON.stringify(options));
-
-			var req = http.request(options, function(res) {
-				res.setEncoding('utf8');
-				res.on('data', function (chunk) {
-					node.log('BODY: ' + chunk);
-				});
-			});
-			req.on('error', function(err) {
-				node.error("Action Error: "+JSON.stringify(err));
-			});
-			req.write(JSON.stringify(data));
-			req.end();
-		}
 
 		this.buildQuery = function(params) {
 			var queries=[];
