@@ -3,17 +3,17 @@ module.exports = function(RED) {
 	var http = require('http');
 	var https = require('https');
 
-//    var cfEnv = require("cfenv");
-    var util = require("util");
-//    var appEnv   = cfEnv.getAppEnv();
+//	var cfEnv = require("cfenv");
+	var util = require("util");
+//	var appEnv   = cfEnv.getAppEnv();
 
 	var watson = require('watson-developer-cloud');
 
 	function NewsNode(config) {
 
-    	RED.nodes.createNode(this,config);
-    	
-    	var node = this;
+	RED.nodes.createNode(this,config);
+	
+	var node = this;
 
 		this.name = config.name;
 		this.key = config.key;
@@ -32,21 +32,21 @@ module.exports = function(RED) {
 			var queries=[];
 			for (var i=0;i<node.queries.length;i++) {
 				var s = {
-				    "color": {
-				        "components": {
-				            "r": node.queries[i].r,
-				            "g": node.queries[i].g,
-				            "b": node.queries[i].b,
-				            "w": node.queries[i].w
-				        },
-				        "fade": node.queries[i].f,
-				        "intensity": node.queries[i].i
-				    },
-				    "target": {
-				        "id": Number(node.queries[i].id),
-				        "type": node.queries[i].type
-				    },
-				    "start_time": node.queries[i].start
+					"color": {
+					"components": {
+				 		"r": node.queries[i].r,
+						"g": node.queries[i].g,
+						"b": node.queries[i].b,
+						"w": node.queries[i].w
+					},
+					"fade": node.queries[i].f,
+					"intensity": node.queries[i].i
+				},
+				"target": {
+					"id": Number(node.queries[i].id),
+					"type": node.queries[i].type
+				},
+					"start_time": node.queries[i].start
 				}
 				queries.push(s);
 			};		
@@ -83,10 +83,11 @@ module.exports = function(RED) {
 			});
 			req.write(JSON.stringify(data));
 			req.end();
-		};
+		}
 
 		this.buildQuery = function(params) {
 			var queries=[];
+			var op1,op2;
 			for (var i=0;i<node.queries.length;i++) {
 				q = node.queries[i];
 				switch (q.op) {
@@ -132,18 +133,8 @@ module.exports = function(RED) {
 
 		this.on('input', function (msg) {
 			var alchemy_data_news = watson.alchemy_data_news({
-//				api_key: 'b093593670f57d48182e095fc7b03b0485f82259'
 				api_key: node.key
 			});
-
-/*
-			console.log(node.start);
-			console.log(node.end);
-			console.log(new Date(node.start));
-			console.log(new Date(node.end));
-			console.log(new Date(node.start).getTime());
-			console.log(new Date(node.end).getTime());
-*/
 
 			var params = {
 				start: new Date(node.start).getTime()/1000, //'now-1d',
