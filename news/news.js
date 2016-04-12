@@ -1,8 +1,6 @@
 module.exports = function(RED) {
 
-	var http = require('http');
-
-//	var cfEnv = require("cfenv");
+//	var cfEnv = require('cfenv');
 //	var appEnv   = cfEnv.getAppEnv();
 
 	var watson = require('watson-developer-cloud');
@@ -25,39 +23,38 @@ module.exports = function(RED) {
 		this.results = config.results;
 
 		this.buildQuery = function(params) {
-			var queries=[];
 			var op1,op2;
 			for (var i=0;i<node.queries.length;i++) {
-				q = node.queries[i];
+				var q = node.queries[i];
 				switch (q.op) {
 					case 'cc':
-						op1 = "[";
-						op2 = "]";
+						op1 = '[';
+						op2 = ']';
 						break;
 					case 'nc':
-						op1 = "-[";
-						op2 = "]";
+						op1 = '-[';
+						op2 = ']';
 						break;
 					case 'gt':
-						op1 = ">";
-						op2 = "";
+						op1 = '>';
+						op2 = '';
 						break;
 					case 'ge':
-						op1 = ">=";
-						op2 = "";
+						op1 = '>=';
+						op2 = '';
 						break;
 					case 'lt':
-						op1 = "<";
-						op2 = "";
+						op1 = '<';
+						op2 = '';
 						break;
 					case 'le':
-						op1 = "<=";
-						op2 = "";
+						op1 = '<=';
+						op2 = '';
 						break;
 				}
 				params['q.'+q.field]=op1+q.value+op2;
 			}	
-		}
+		};
 
 		this.buildCustomQuery = function(params) {
 			var	values = node.query.split('&');
@@ -65,10 +62,9 @@ module.exports = function(RED) {
 				var value = values[i];
 				var a = value.indexOf('=');
 				var field = value.substr(0,a);
-				console.log(field+": "+value.substr(a+1));
 				params[field]=value.substr(a+1);
 			}	
-		}
+		};
 
 		this.on('input', function (msg) {
 			var alchemy_data_news = watson.alchemy_data_news({
@@ -89,18 +85,18 @@ module.exports = function(RED) {
 				this.buildQuery(params);
 			}
 
-			console.log(params);
-			 
 			alchemy_data_news.getNews(params, function (err, news) {
-				if (err)
+				if (err) {
 					node.error(err);
-				else
+				}
+				else {
 					node.send({'payload': news});
+				}
 			});
 		});
 	}
 
-	RED.nodes.registerType("news",NewsNode);
+	RED.nodes.registerType('news',NewsNode);
 
 }
 
